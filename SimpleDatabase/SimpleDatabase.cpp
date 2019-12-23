@@ -337,8 +337,8 @@ int main()
     setlocale(LC_ALL, "Russian");
     //    SetConsoleCP(1251);
     //    SetConsoleOutputCP(1251);
-    cout << ConvertToBinaryOperation("input.txt", "input.bin", '\t') << "\n";
-    cout << ConvertToBinaryCustomer("customers.txt", "customers.bin", '\t') << "\n";
+    ConvertToBinaryOperation("input.txt", "input.bin", '\t');
+    ConvertToBinaryCustomer("customers.txt", "customers.bin", '\t');
     //InFileSort("input.bin", "input.sorted.bin");
     DBExternalSort<FileRecordOperation>("input.bin");
     //InMemSort("customers.bin", "customers.sorted.bin");
@@ -349,36 +349,29 @@ int main()
             return o.code == c.code;
         });
 
-    vector<FileRecordMixed> v = ReadBinaryRecords<FileRecordMixed>("mixed.bin");
+    //vector<FileRecordMixed> v = ReadBinaryRecords<FileRecordMixed>("mixed.bin");
     char s[40];
+    cout << "ВВедите фильтр substr customer.str: ";
     cin >> s;
     transform(s, s + 40, s, COemToAnsi);
-    WriteBinaryRecords("request.customer.bin", FindCustomerContains(v, s));
-    cout << ConvertFromBinaryMixed("request.customer.bin", "request.customer.txt", ';') << "\n";
+    //WriteBinaryRecords("request.customer.bin", FindCustomerContains(v, s));
+    ConvertFromBinaryMixed("request.customer.bin", "request.customer.txt", ';');
+    DBSelect<FileRecordMixed>("mixed.bin", "request.customer.bin", [s](const FileRecordMixed& record)
+        {
+            return strstr(record.customer, s) != NULL;
+        });
     int l, r;
+    cout << "ВВедите фильтр l, r records.sum: ";
     cin >> l >> r;
-    WriteBinaryRecords("request.sum.bin", FindSumInRange(v, l, r));
-    cout << ConvertFromBinaryMixed("request.sum.bin", "request.sum.txt", ';') << "\n";
+    //WriteBinaryRecords("request.sum.bin", FindSumInRange(v, l, r));
+    ConvertFromBinaryMixed("request.sum.bin", "request.sum.txt", ';');
+    DBSelect<FileRecordMixed>("mixed.bin", "request.sum.bin", [l, r](const FileRecordMixed& record)
+        {
+            return l <= record.sum && record.sum <= r;
+        });
 
-    cout << ConvertFromBinaryOperation("input.bin", "output.txt", ';') << "\n";
-    cout << ConvertFromBinaryCustomer("customers.bin", "customers.out.txt", ';') << "\n";
-    cout << ConvertFromBinaryCustomer("customers.sorted.bin", "customers.sorted.txt", ';') << "\n";
-    cout << ConvertFromBinaryMixed("mixed.bin", "mixed.txt", ';') << "\n";
+    ConvertFromBinaryOperation("input.bin", "output.txt", ';');
+    ConvertFromBinaryCustomer("customers.bin", "customers.out.txt", ';');
+    ConvertFromBinaryMixed("mixed.bin", "mixed.txt", ';');
     return 0;
-    //    Time time;
-    //    time.day = 48;
-    //    time.month = 49;
-    //    time.year = 256 * 50 + 51;
-    //    cout.write((char*)(&time), sizeof(Time));
-    //    return 0;
-
-    //    setlocale(LC_ALL, "Russian");
-    //    LC_A
-    //    SetConsoleCP(1251);
-    //    SetConsoleOutputCP(1251);
-    //    cout << "привет\n";
-    //    string s;
-    //    cin >> s;
-    //    cout << s;
-    //    return 0;
 }
